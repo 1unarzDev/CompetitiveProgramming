@@ -51,6 +51,15 @@ template<typename T1, typename T2> // cout << pair<T1, T2>
 ostream& operator<<(ostream &ostream, const pair<T1, T2> &p) { return (ostream << p.first << " " << p.second); }
 template<typename T> // cout << vector<T>
 ostream& operator<<(ostream &ostream, const vector<T> &c) { for (auto &it : c) cout << it << " "; return ostream; }
+template<typename T> // cout << vector<vector<T>>
+ostream& operator<<(ostream &ostream, const vector<vector<T>> &c) {
+    for (auto &row : c) {
+        for (auto &elem : row)
+            ostream << elem << " ";
+        ostream << endl;
+    }
+    return ostream;
+}
 
 // Utility functions
 vector<bool> sieve(int n) {
