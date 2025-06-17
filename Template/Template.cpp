@@ -6,7 +6,7 @@ using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
 using pll = pair<ll, ll>;
-using vll = vector<ll, ll>;
+using vll = vector<ll>;
 using vpll = vector<pll>;
 
 // Constants
@@ -21,7 +21,7 @@ constexpr ll INF = 2e18;
 #define int long long
 #define pb push_back
 #define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin() (x).rend()
+#define rall(x) (x).rbegin(), (x).rend()
 #define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
 
@@ -41,6 +41,7 @@ struct custom_hash {
 };
 template <typename T1, typename T2> // Integer key random hash
 using safe_map = unordered_map<T1, T2, custom_hash>;
+#define unordered_map safe_map
 
 // Operator overloads
 template <typename T1, typename T2> // cin >> pair<T1, T2>
