@@ -5,13 +5,9 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
-using pll = pair<ll, ll>;
-using vll = vector<ll, ll>;
-using vpll = vector<pll>;
 
 // Constants
 constexpr ll MOD = 1e9 + 7;
-constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
 
@@ -20,8 +16,6 @@ constexpr ll INF = 2e18;
 #define S second
 #define int long long
 #define pb push_back
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin() (x).rend()
 #define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
 
@@ -80,27 +74,17 @@ vector<bool> sieve(int n) {
     }
     return is_prime;
 }
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-ll lcm(ll a, ll b) { return a / gcd(a, b) * b; }
-
-template <typename Map>
-auto min_key(const Map& mp) -> decltype(mp.begin()->first) {
-    return std::min_element(mp.begin(), mp.end(),
-        [](const auto& a, const auto& b) {
-            return a.second < b.second;
-        })->first;
-}
-
-template <typename Map>
-auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
-    return std::max_element(mp.begin(), mp.end(),
-        [](const auto& a, const auto& b) {
-            return a.second < b.second;
-        })->first;
-}
 
 void solve(){
-    
+    int n, e, s, m;
+    cin >> n;
+    s = m = 0;
+    for(int i = 0; i < n; i++){
+        cin >> e; 
+        s += e;
+        if((int)powf(s, 0.5) == powf(s, 0.5) && (int)powf(s, 0.5) % 2 == 1) m++;
+    }
+    cout << m << endl;
 }
 
 int32_t main() {
