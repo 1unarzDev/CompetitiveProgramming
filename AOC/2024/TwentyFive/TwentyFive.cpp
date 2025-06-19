@@ -31,6 +31,7 @@ constexpr ll MAX_N = 1e5 + 5;
 #define endl "\n"
 
 // I/O
+#define LOCAL
 void setupIO() {
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
@@ -59,6 +60,7 @@ using safe_map = unordered_map<T1, T2, custom_hash>;
 // Operator overloads
 template <typename T1, typename T2> // cin >> pair<T1, T2>
 istream& operator>>(istream &istream, pair<T1, T2> &p) { return (istream >> p.first >> p.second); }
+
 template <typename T> // cin >> vector<T>
 istream& operator>>(istream &istream, vector<T> &v) {
     for(auto &it : v)
@@ -81,51 +83,6 @@ ostream& operator<<(ostream &ostream, const vector<vector<T>> &c) {
 }
 
 // Utility functions
-int binpower(int base, int e, int mod) {
-    int result = 1;
-    base %= mod;
-    while (e) {
-        if (e & 1)
-            result = (__int128)result * base % mod;
-        base = (__int128)base * base % mod;
-        e >>= 1;
-    }
-    return result;
-}
-
-bool check_composite(int n, int a, int d, int s) {
-    int x = binpower(a, d, n);
-    if (x == 1 || x == n - 1)
-        return false;
-    for (int r = 1; r < s; r++) {
-        x = (__int128)x * x % n;
-        if (x == n - 1)
-            return false;
-    }
-    return true;
-}
-
-bool MillerRabin(int n) {
-    if (n < 2)
-        return false;
-
-    int r = 0;
-    int d = n - 1;
-    while ((d & 1) == 0) {
-        d >>= 1;
-        r++;
-    }
- 
-    // Deterministic for n < 3e18
-    for (int a : {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
-        if (n == a)
-            return true;
-        if (check_composite(n, a, d, r))
-            return false;
-    }
-    return true;
-}
-
 vector<bool> sieve(int n) {
     vector<bool> is_prime(n + 1, true);
     is_prime[0] = is_prime[1] = false;
@@ -157,18 +114,34 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-void solve(){
-    
-}
-
 int32_t main() {
     fastio;
     setupIO();
 
-    int tt;
-    cin >> tt;
-    while(tt--){
-        solve();
+    int f = 0;
+    bool w;
+    string s;
+    set<vll> k, h;
+    while(cin >> s){
+        w = (s == "#####");
+        vll t(5, (w ? 1 : 0));
+        for(int i = 0; i < 6; ++i){
+            cin >> s;
+            for(int j = 0; j < 5; ++j){
+                if(s[j] == '#') t[j]++;
+            }                
+        }
+        if(w) k.insert(t);
+        else h.insert(t);
     }
-    return 0;
+    for(auto i : k){
+        for(auto j : h){
+            w = true;
+            for(int k = 0; k < 5; ++k){
+                if(i[k] + j[k] > 7) w = false;
+            }
+            if(w) ++f;
+        }
+    }
+    cout << f;
 } 

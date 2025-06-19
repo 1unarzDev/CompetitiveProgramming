@@ -31,6 +31,7 @@ constexpr ll MAX_N = 1e5 + 5;
 #define endl "\n"
 
 // I/O
+#define LOCAL
 void setupIO() {
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
@@ -157,18 +158,89 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-void solve(){
+void p2(int n){
+    ld r = pow(10.0, n);
+    cout << fixed << setprecision(n) << (ceil(acos(-1.0) * r) / r) << endl;
+}
+
+void p3(){
+    map<int, string> d = {{0, "Sunday"}, 
+                         {1, "Monday"},
+                         {2, "Tuesday"},
+                         {3, "Wednesday"},
+                         {4, "Thursday"},
+                         {5, "Friday"},
+                         {6, "Saturday"}};
+
+    vector<int32_t> in(6);
+    cin >> in;
+
+    tm time_in = { in[0], in[1], in[2], // second, minute, hour
+        in[3], --in[4], in[5] - 1900 }; // 1-based day, 0-based month, year since 1900
     
+    time_t time_temp = mktime(&time_in);
+    
+    const tm * time_out = localtime(&time_temp);
+    
+    cout << "Today is " << d[time_out->tm_wday] << "\n";
+}
+
+void p4(){
+    sll s;
+    int n;
+    string in;
+    cin.ignore();
+    getline(cin, in);
+    istringstream iss(in);
+    while(iss >> n) s.insert(n);
+    for(auto& i : s) cout << i << " ";
+    cout << endl;
+}
+
+struct bday {
+    int d;
+    int m;
+    int y;
+};
+void p5(int n){
+    vector<bday> b(n);
+    for(int i = 0; i < n; ++i){
+        cin >> b[i].d >> b[i].m >> b[i].y;        
+    }
+
+    sort(all(b), [](const bday &a, const bday &b){
+        if (a.y != b.y) return a.y < b.y;
+        if (a.m != b.m) return a.m < b.m;
+        return a.d < b.d;
+    });
+
+    for(const auto &i : b) cout << i.d << " " << i.m << " " << i.y << endl; 
+}
+
+void p6(int n, int f){
+    vll v(n);
+    cin >> v;
+    auto itr = lower_bound(all(v), f);
+    int i = distance(v.begin(), itr);
+    if(i == n) i = -1;
+    cout << i << endl;
+}
+
+void p11(){
+    int n;
+    cin >> n;
+    cout << sieve()
 }
 
 int32_t main() {
     fastio;
     setupIO();
 
-    int tt;
-    cin >> tt;
-    while(tt--){
-        solve();
-    }
+    p2(6);
+    p3();
+    p4();
+    p5(8);
+    p6(1e4, 74399);
+
     return 0;
 } 
