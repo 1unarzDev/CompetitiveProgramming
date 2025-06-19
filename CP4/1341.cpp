@@ -106,7 +106,7 @@ bool check_composite(int n, int a, int d, int s) {
     return true;
 }
 
-bool MillerRabin(int n) {
+bool miller_rabin(int n) {
     if (n < 2)
         return false;
 
@@ -117,7 +117,7 @@ bool MillerRabin(int n) {
         r++;
     }
  
-    // Deterministic for n < 3e18
+    // deterministic for long long max val
     for (int a : {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
         if (n == a)
             return true;
@@ -228,8 +228,10 @@ void p6(int n, int f){
 
 void p11(){
     int n;
-    cin >> n;
-    cout << sieve()
+    for(int i = 0; i < 85; i++){
+        cin >> n;
+        cout << (miller_rabin(n) ? "YES" : "NO") << endl;
+    }
 }
 
 int32_t main() {
@@ -241,6 +243,7 @@ int32_t main() {
     p4();
     p5(8);
     p6(1e4, 74399);
+    p11();
 
     return 0;
 } 
