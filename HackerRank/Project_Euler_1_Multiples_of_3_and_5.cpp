@@ -158,7 +158,12 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
 }
 
 void solve(){
-    
+    int n; cin >> n;
+    --n;
+
+    cout << (((n - (n % 3)) / 3) * ((3 + n - (n % 3))) / 2) 
+            + (((n - (n % 5)) / 5) * ((5 + n - (n % 5))) / 2)
+            - (((n - (n % 15)) / 15) * ((15 + n - (n % 15))) / 2) << endl;
 }
 
 int32_t main() {
