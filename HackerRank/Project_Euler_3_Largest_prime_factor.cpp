@@ -158,22 +158,13 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
 }
 
 void solve(){
-    int n, s, i; cin >> n;
-    i = s = 0;
-
-    // even indices 2 + 3k
-    // f(1) = 1, f(2) = **2
-    // f(3) = f(1) + f(2)
-    // f(4) = f(3) + f(2) = f(1) + 2f(2)
-    // f(5) = f(4) + f(3) = **2f(1) + 3f(2)
-    // f(6) = f(4) + f(5)
-    // f(7) = f(5) + f(6)
-    // f(8) = f(6) + f(7) = f(5) + 2f(6) = **8f(1) + 13f(2) 
-
-    while(i < n){
-        
-        ++i;
+    int n, i; cin >> n;
+    i = 2;
+    while(i * i <= n){
+        if(n % i == 0) n /= i;
+        else ++i;
     }
+    cout << n << endl;
 }
 
 int32_t main() {
