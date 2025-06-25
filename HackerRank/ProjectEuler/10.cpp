@@ -126,10 +126,11 @@ bool miller_rabin(ll n) {
     return true;
 }
 
-vector<bool> sieve(ll n) {
-    vector<bool> is_prime(n + 1, true);
+vector<char> sieve(ll n) {
+    vector<char> is_prime(n + 1, true);
     is_prime[0] = is_prime[1] = false;
-    for (ll i = 2; i * i <= n; i++) {
+    ll t = sqrt(n);
+    for (ll i = 2; i <= t; i++) {
         if (is_prime[i]) {
             for (ll j = i * i; j <= n; j += i) {
                 is_prime[j] = false;
@@ -168,7 +169,20 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
 }
 
 void solve(){
-    
+    int n; cin >> n;
+    vector<char> p = sieve(n);
+    if(n == 2){
+        cout << 2 << endl;
+        return;
+    }
+    int t = 5;
+    for (int i = 6; i < n; i += 6) {
+        if (p[i - 1]) t += i - 1;
+        if (p[i + 1]) t += i + 1;
+    }
+    if(n % 6 == 0 && p[n - 1]) t += n - 1;
+    if(n % 6 == 5 && p[n]) t += n;
+    cout << t << endl;
 }
 
 int32_t main() {

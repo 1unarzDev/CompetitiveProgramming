@@ -168,7 +168,12 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
 }
 
 void solve(){
-    
+    int n; cin >> n;
+    vector<int> v(n);
+    for(int i = 1; i <=n; ++i){
+        v[i - 1] = i;
+    }
+    cout << lcm(v) << endl;
 }
 
 int32_t main() {

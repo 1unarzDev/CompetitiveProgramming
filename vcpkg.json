@@ -1,0 +1,8 @@
+{
+  "name": "competitive-programming",
+  "version": "0.1.0",
+  "dependencies": [
+    "fmt",
+    "matplotplusplus"
+  ]
+}
