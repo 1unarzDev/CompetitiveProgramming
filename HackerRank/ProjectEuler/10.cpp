@@ -168,31 +168,46 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-void solve(){
-    int n; cin >> n;
-    vector<char> p = sieve(n);
-    if(n == 2){
-        cout << 2 << endl;
-        return;
-    }
-    int t = 5;
-    for (int i = 6; i < n; i += 6) {
-        if (p[i - 1]) t += i - 1;
-        if (p[i + 1]) t += i + 1;
-    }
-    if(n % 6 == 0 && p[n - 1]) t += n - 1;
-    if(n % 6 == 5 && p[n]) t += n;
-    cout << t << endl;
-}
-
 int32_t main() {
     fastio;
     setupIO();
 
-    int tt;
+    ll tt;
     cin >> tt;
-    while(tt--){
-        solve();
+    vll a(tt);
+    map<ll, vll> v;
+    ll s = 0;
+    ll m = 0;
+    ll e;
+    for(ll i = 0; i < tt; ++i){
+        cin >> e;
+        v[e].pb(i);
+        if(e > m) m = e;
+    }
+    
+    vll lp(m + 1);
+    vll pr;
+    for (ll i = 2; i <= m; ++i){
+        if(lp[i] == 0){
+            lp[i] = i;
+            pr.pb(i);
+            s += i;
+        }
+        for(ll j = 0; i * pr[j] <= m; ++j){
+            lp[i * pr[j]] = pr[j];
+            if (pr[j] == lp[i]){
+                break;
+            }
+        }
+        if(v.count(i)) {
+            for (auto idx : v[i]) {
+                a[idx] = s;
+            }
+        }
+    }
+    
+    for(int i = 0; i < tt; ++i){
+        cout << a[i] << endl;        
     }
     return 0;
 } 
