@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Aliases
+// aliases
 using ll = long long;
 using ld = long double;
 using ull = unsigned long long;
@@ -11,14 +11,14 @@ using vpll = vector<pll>;
 using sll = set<ll>;
 using mll = map<ll, ll>;
 
-// Constants
+// constants
 constexpr ll MOD = 1e9 + 7;
 constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
 constexpr ll MAX_N = 1e5 + 5;
 
-// Macros
+// macros
 #define F first
 #define S second
 #define int long long
@@ -30,7 +30,7 @@ constexpr ll MAX_N = 1e5 + 5;
 #define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
 
-// I/O
+// i/o
 void setupIO() {
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
@@ -38,10 +38,10 @@ void setupIO() {
     #endif
 }
 
-// Hacks
+// hacks
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
-        x += 0x9e3779b97f4a7c15;
+        x += 0x9e3779b97f4a7c15; // prime closest to integral part of (sqrt(5)-1)/2 multiplied by 2^32
         x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
         return x ^ (x >> 31);
@@ -52,11 +52,11 @@ struct custom_hash {
         return splitmix64(x + FIXED_RANDOM);
     }
 };
-template <typename T1, typename T2> // Integer key random hash
+template <typename T1, typename T2> // integer key random hash
 using safe_map = unordered_map<T1, T2, custom_hash>;
 #define unordered_map safe_map
 
-// Operator overloads
+// operator overloads
 template <typename T1, typename T2> // cin >> pair<T1, T2>
 istream& operator>>(istream &istream, pair<T1, T2> &p) { return (istream >> p.first >> p.second); }
 template <typename T> // cin >> vector<T>
@@ -80,7 +80,7 @@ ostream& operator<<(ostream &ostream, const vector<vector<T>> &c) {
     return ostream;
 }
 
-// Utility functions
+// utility functions
 ll binpower(ll base, ll e, ll mod) {
     ll result = 1;
     base %= mod;
@@ -147,7 +147,7 @@ vll primes(ll n) {
             lp[i] = i;
             pr.pb(i);
         }
-        for(ll j = 0; i * pr[j] <= m; ++j){
+        for(ll j = 0; i * pr[j] <= n; ++j){
             lp[i * pr[j]] = pr[j];
             if (pr[j] == lp[i]){
                 break;
@@ -158,14 +158,14 @@ vll primes(ll n) {
 }
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 ll lcm(ll a, ll b) { return a / gcd(a, b) * b; }
-ll lcm(const vll &v) {
-    return accumulate(all(v), 1LL, [](ll a, ll b) {
-        return lcm(a, b);
-    });
-}
 ll gcd(const vll &v) {
     return accumulate(all(v), v[0], [](ll a, ll b) {
         return gcd(a, b);
+    });
+}
+ll lcm(const vll &v) {
+    return accumulate(all(v), 1LL, [](ll a, ll b) {
+        return lcm(a, b);
     });
 }
 
