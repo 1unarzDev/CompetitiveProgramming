@@ -147,7 +147,7 @@ vll primes(ll n) {
             lp[i] = i;
             pr.pb(i);
         }
-        for(ll j = 0; i * pr[j] <= m; ++j){
+        for(ll j = 0; i * pr[j] <= n; ++j){
             lp[i * pr[j]] = pr[j];
             if (pr[j] == lp[i]){
                 break;
@@ -185,18 +185,27 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-void solve(){
-    
-}
-
 int32_t main() {
     fastio;
     setupIO();
 
-    int tt;
+    ll tt, e, n, m;
     cin >> tt;
-    while(tt--){
-        solve();
+    vll in(tt);
+    m = 0;
+    
+    for(int i = 0; i < tt; i++){
+        cin >> e;
+        in[i] = e;
+        if(e > m) m = e;
     }
+
+    n = 1e6;
+    vll p = primes(n);
+
+    for(auto& i : in){
+        cout << p[i - 1] << endl;
+    }
+
     return 0;
-} 
+}

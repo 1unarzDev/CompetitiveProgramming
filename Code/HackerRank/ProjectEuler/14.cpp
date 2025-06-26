@@ -147,7 +147,7 @@ vll primes(ll n) {
             lp[i] = i;
             pr.pb(i);
         }
-        for(ll j = 0; i * pr[j] <= m; ++j){
+        for(ll j = 0; i * pr[j] <= n; ++j){
             lp[i * pr[j]] = pr[j];
             if (pr[j] == lp[i]){
                 break;
