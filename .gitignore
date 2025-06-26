@@ -8,5 +8,6 @@ tempCodeRunnerFile.*
 
 build/
 vcpkg_installed/
+CMakeFiles/
 
 CMakeCache.txt
