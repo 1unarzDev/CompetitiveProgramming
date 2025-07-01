@@ -1,3 +1,5 @@
+#define ANKERL_NANOBENCH_IMPLEMENT
+#include "../../Utils/Nanobench.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -36,6 +38,15 @@ void setupIO() {
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
+    #endif
+}
+
+// Debug
+#define DEBUG
+void debug() {
+    #ifdef DEBUG
+        freopen("/home/liam-bray/CompetitiveProgramming/Code/CP4/input.txt", "r", stdin);
+        freopen("/home/liam-bray/CompetitiveProgramming/Code/CP4/output.txt", "w", stdout);
     #endif
 }
 

@@ -16,7 +16,7 @@ constexpr ll MOD = 1e9 + 7;
 constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
-constexpr ll MAX_N = 1e5 + 5;
+constexpr ll MAXN = 1e5 + 5;
 
 // Macros
 #define F first
@@ -185,18 +185,46 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-void solve(){
-    
-}
-
 int32_t main() {
     fastio;
     setupIO();
 
     int tt;
     cin >> tt;
-    while(tt--){
-        solve();
+    vll in(tt);
+    int m = 0;
+    for(int i = 0; i < tt; ++i){
+        cin >> in[i];
+        m = max(m, in[i]);
     }
+   
+    mll r = {{1, 1}};
+    vll c(m);
+    int lm = 1;
+    for(int i = 1; i <= m; ++i){
+        int t = 1;
+        int j = i;
+        while(j != 1){
+            ++t;
+            if(j % 2 == 0) j >>= 1;
+            else j = j * 3 + 1;
+        }
+        if(t >= lm){
+            r[i] = t;
+            lm = t;
+        }
+    }
+    
+    for(int i = 0; i < tt; ++i){
+        auto it = r.upper_bound(in[i]);
+        if (it == r.begin()){
+            cout << 1 << endl;
+        } 
+        else{
+            --it;
+            cout << it->first << endl;
+        }
+    }
+
     return 0;
-} 
+}
