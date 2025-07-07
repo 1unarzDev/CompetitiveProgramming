@@ -309,10 +309,15 @@ int32_t main() {
     
     int n, k, mx, my; cin >> n >> k;
     vector<box> p(n); cin >> p;
-    mx = my = 0; 
-    for(box& b : p) {
-        if(b.x2 > mx) mx = b.x2;       
-        if(b.y2 > my) my = b.y2; 
+    if(k == 1){
+        mx = my = 201; 
+    }
+    else{
+        mx = my = 0; 
+        for(box& b : p) {
+            if(b.x2 > mx) mx = b.x2;       
+            if(b.y2 > my) my = b.y2; 
+        }
     }
 
     dps u = dps(my, mx);
@@ -320,6 +325,21 @@ int32_t main() {
     for(box& b : p) u.add(b.x1 - 1, b.y1 - 1, b.x2 - 1, b.y2 - 1, 1);
     
     vector<vll> w = u.revert();
+    
+    for(int i = 0; i < my; ++i){
+        for(int j = 0; j < mx; ++j){
+            if(w[i][j] == k) w[i][j] = -1;
+            else if(w[i][j] == k - 1) w[i][j] = 1;
+            else w[i][j] = 0;
+        }
+    }
+
+    for(int i = 0; i < my; ++i){
+        for(int j = 0; j < mx; ++j){
+
+        }
+    }
+
     cout << w;
 
     return 0;
