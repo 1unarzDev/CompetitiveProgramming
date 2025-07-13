@@ -17,7 +17,9 @@ constexpr ll MOD = 1e9 + 7;
 constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
-constexpr ll MAX_N = 1e5 + 5;
+constexpr ll MAXN = 1e5 + 5;
+constexpr ll DIRA[9] = {-1, 1, -1, 0, 1, 1, 0, -1, -1};
+constexpr ll DIRC[5] = {0, 1, 0, -1, 0};
 
 // macros
 #define F first
@@ -33,7 +35,7 @@ constexpr ll MAX_N = 1e5 + 5;
 #define endl "\n"
 
 // i/o
-void setupIO() {
+void setupio() {
     #ifdef USACO
         freopen("paintbarn.in", "r", stdin);
         freopen("paintbarn.out", "w", stdout);
@@ -242,13 +244,16 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
 }
 
 struct box {
-    int x1, y1, x2, y2;        
+    ll x1, y1, x2, y2;        
+    
+    box() : x1(0), y1(0), x2(0), y2(0) {}
+    box(ll x1, ll y1, ll x2, ll y2) : x1(x1), y1(y1), x2(x2), y2(y2) {}
 };
 istream& operator>>(istream &istream, box &b) { return (istream >> b.x1 >> b.y1 >> b.x2 >> b.y2); }
 
-class ps {
+class ps2 {
     public:
-        ps(const vector<vll>& a) {
+        ps2(const vector<vll>& a) {
             ll r = a.size(), c = a[0].size();
             p = vector<vll>(r, vll(c, 0));
 
@@ -262,7 +267,7 @@ class ps {
                 }
             }
         }
-    
+
         ll sum(ll y1, ll x1, ll y2, ll x2) {
             ll r = p[y2][x2];
             if (y1 > 0) r -= p[y1 - 1][x2];
@@ -271,18 +276,17 @@ class ps {
             return r;
         }
         
-        vector<vll> get() {
-            return p;
-        }
+    const vector<vll>& get() const {
+        return p;
+    }
     
     private:
         vector<vll> p;
 };
 
-
-class dps {
+class dps2 {
     public:
-        dps(ll rows, ll cols) {
+        dps2(ll rows, ll cols) {
             p = vector<vll>(rows, vll(cols, 0));
         }
     
@@ -290,42 +294,48 @@ class dps {
             p[y1][x1] += v;
             if (y2 + 1 < p.size()) p[y2 + 1][x1] -= v;
             if (x2 + 1 < p[0].size()) p[y1][x2 + 1] -= v;
-            if (y2 + 1 < p.size() && x2 + 1 < p[0].size())
+            if (y2 + 1 < p.size() && x2 + 1 < p[0].size()) 
                 p[y2 + 1][x2 + 1] += v;
         }
     
         vector<vll> revert() {
-            return ps(p).get();
+            return ps2(p).get();
         }
     
     private:
         vector<vll> p;
 };
 
-
 int32_t main() {
     fastio;
-    setupIO();
+    setupio();
     
-    int n, k, mx, my; cin >> n >> k;
+    // get number of painted rectangles and desired coats
+    int n, k; cin >> n >> k;
+
+    // set appropriate size with buffer
+    int mx, my, md;
+    md = 201;
     vector<box> p(n); cin >> p;
-    if(k == 1){
-        mx = my = 201; 
-    }
+    if(k == 1) mx = my = md; 
     else{
         mx = my = 0; 
         for(box& b : p) {
             if(b.x2 > mx) mx = b.x2;       
             if(b.y2 > my) my = b.y2; 
         }
+        mx += 2;
+        my += 2;
+        mx = min(md, mx);
+        my = min(md, my);
     }
 
-    dps u = dps(my, mx);
-        
-    for(box& b : p) u.add(b.x1 - 1, b.y1 - 1, b.x2 - 1, b.y2 - 1, 1);
+    // 2d diff arr for paint coats
+    dps2 f = dps2(my, mx);
+    for(box& b : p) f.add(b.x1, b.y1, b.x2, b.y2, 1);
+    vector<vll> w = f.revert();
     
-    vector<vll> w = u.revert();
-    
+    // convert to cost array of painting values
     for(int i = 0; i < my; ++i){
         for(int j = 0; j < mx; ++j){
             if(w[i][j] == k) w[i][j] = -1;
@@ -334,13 +344,171 @@ int32_t main() {
         }
     }
 
-    for(int i = 0; i < my; ++i){
-        for(int j = 0; j < mx; ++j){
+    // check if it is a valid index and value
+    auto v1 = [&](int y, int x) {
+        return y >= 0 && y < my && x >= 0 && x < mx && (w[y][x] == 1 || w[y][x] == -1);
+    };
 
+    // filter out strips with dimensions =1
+    bool u, d, l, r, ul, ur, dl, dr;
+    for (int i = 0; i < my; ++i) {
+        for (int j = 0; j < mx; ++j) {
+            u = v1(i - 1, j);
+            ul = v1(i - 1, j - 1);
+            ur = v1(i - 1, j + 1);
+            d = v1(i + 1, j);
+            dl = v1(i + 1, j - 1);
+            dr = v1(i + 1, j + 1);
+            l = v1(i, j - 1);
+            r = v1(i, j + 1);
+            
+            if(!((u && ul && l) || (u && ur && r) || (d && dl && l) || (d && dr && r))) w[i][j] = 0;
+        }
+    }
+    
+    vector<vll> prc(mx, vll(my + 1, 0));
+    for(int i = 0; i < mx; ++i){
+        for(int j = 0; j < my; ++j){
+            prc[i][j + 1] = prc[i][j] + w[j][i];
         }
     }
 
-    cout << w;
+    // disjoint max submatrix by splitting along a vertical or horizontal line
+    // iterate through all pairs of rows and calculate max positive difference between prefix sums
+    int mxs, mns, mv, mh, si, ei, tsi, mr;
+    vll pr(mx);
+    vector<pair<int, box>> mfs(mx - 3), mbs(mx - 3), ws(my - 3);
+    vector<pair<pair<int, box>, pair<int, box>>> mhs, mvs;
+    for(int i1 = 0; i1 < my - 1; ++i1){
+        for(int i2 = i1 + 1; i2 < my; ++i2){
+
+            pr[0] = prc[0][i2] - prc[0][i1];
+            for(int j = 1; j < mx; ++j){
+                pr[j] = pr[j - 1] + prc[j][i2] - prc[j][i1];
+            }
+            
+            // calculate optimal horizontal splits
+            // by finding maximum submatrix for all pairs of rows
+            // and checking all maxium pairs on either side of the split
+            mxs = max(pr[1], 0LL);
+            mns = pr[0];
+            si = 0;
+            ei = 1;
+            mfs[0] = mp(mxs, box(si, i1, ei, i2));
+            for(int j = 2; j < mx - 2; ++j){
+                if(pr[j] - mns > mxs){
+                    mxs = pr[j] - mns;
+                    ei = j; 
+                    si = tsi;
+                }
+                if(pr[j] < mns){
+                    mns = pr[j];
+                    tsi = j;
+                }
+                mfs[j - 1] = mp(mxs, box(si, i1, ei, i2));
+            }
+
+            mxs = max(pr[mx - 2], 0LL);
+            mns = pr[mx - 1];
+            si = mx - 1;
+            ei = mx - 2;
+            mbs[mx - 1] = mp(mxs, box(si, i1, ei, i2));
+            for(int j = mx - 3; j >= 2; --j){
+                if(pr[j] - mns > mxs){
+                    mxs = pr[j] - mns;
+                    ei = j; 
+                    si = tsi;
+                }
+                if(pr[j] < mns){
+                    mns = pr[j];
+                    tsi = j;
+                }
+                mbs[j + 1] = mp(mxs, box(si, i1, ei, i2));
+            }
+            
+            // iterate through max submatrices for all splits
+            mr = 0;
+            for(int j = 1; j < mx - 3; ++j){
+                if(mfs[j].F + mbs[j].F > mfs[mr].F + mbs[mr].F){
+                    mr = j;
+                }
+            }
+            mhs.pb(mp(mfs[mr], mbs[mr]));
+        }
+    }
+
+    // find optimal regions from vertical and horizontal splits
+    int mmhs, mmvs;
+    mmhs = mmvs = 0;
+    for(int i = 0; i < mhs.size(); ++i){
+        if(mhs[i].F.F + mhs[i].S.F > mhs[mmhs].F.F + mhs[mmhs].S.F){
+            mmhs = i;
+        }
+    }
+    for(int i = 0; i < mvs.size(); ++i){
+        if(mvs[i].F.F + mvs[i].S.F > mvs[mmvs].F.F + mvs[mmvs].S.F){
+            mmvs = i;
+        }
+    }
+
+    // set optimal regions
+    box pbb1, pbb2;
+    if(mvs[mmvs].F.F + mvs[mmvs].S.F >= mhs[mmhs].F.F + mhs[mmhs].S.F){
+        pbb1 = mvs[mmvs].F.S;
+        pbb2 = mvs[mmvs].S.S;
+    }
+    else{
+        pbb1 = mhs[mmhs].F.S;
+        pbb2 = mhs[mmhs].S.S;
+    }
+
+    // paint over optimal regions
+    for(int i = pbb1.x1; i <= pbb1.x2; ++i){
+        for(int j = pbb1.y1; j <= pbb1.y2; ++j){
+            w[i][j] = 1;
+        }
+    }
+
+    for(int i = pbb2.x1; i <= pbb2.x2; ++i){
+        for(int j = pbb2.y1; j <= pbb2.y2; ++j){
+            w[i][j] = 1;
+        }
+    }
+
+    // not necessary, but nice for visualization of painted squares
+    for(int i = 0; i < my; ++i){
+        for(int j = 0; j < mx; ++j){
+            if(w[i][j] == -1) w[i][j] = 1;
+            else w[i][j] = 0;
+        }
+    }
+    
+    // check if valid index and painted
+    auto v2 = [&](int y, int x) {
+        return y >= 0 && y < my && x >= 0 && x < mx && w[y][x] == 1;
+    };
+    
+    // sum valid regions
+    int s = 0;
+    for (int i = 0; i < my; ++i) {
+        for (int j = 0; j < mx; ++j) {
+            u = v2(i - 1, j);
+            ul = v2(i - 1, j - 1);
+            ur = v2(i - 1, j + 1);
+            d = v2(i + 1, j);
+            dl = v2(i + 1, j - 1);
+            dr = v2(i + 1, j + 1);
+            l = v2(i, j - 1);
+            r = v2(i, j + 1);
+            
+            if(!((u && ul && l) || (u && ur && r) || (d && dl && l) || (d && dr && r))) w[i][j] = 0;
+            
+            s += w[i][j];
+        }
+    }
+
+    cout << w << endl;
+    cout << s;
 
     return 0;
 } 

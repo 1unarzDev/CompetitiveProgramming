@@ -30,7 +30,6 @@ constexpr ll MAXN = 1e5 + 5;
 #define rall(x) (x).rbegin(), (x).rend()
 #define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
-#define sz(x) ((ll)(x).size())
 
 // i/o
 void setupio() {
@@ -39,6 +38,60 @@ void setupio() {
         freopen("output.txt", "w", stdout);
     #endif
 }
+
+// benchmark
+class Timer {
+    public:
+        Timer() {
+            set_resolution<chrono::microseconds>();
+        }     
+
+        Timer& nanoseconds() { 
+            set_resolution<chrono::nanoseconds>();
+            return *this;
+        }
+
+        Timer& microseconds() {
+            set_resolution<chrono::microseconds>();
+            return *this;
+        }
+
+        Timer& milliseconds() {
+            set_resolution<chrono::milliseconds>();
+            return *this;
+        }
+
+        Timer& seconds() {
+            set_resolution<chrono::seconds>();
+            return *this;
+        }
+
+        void start() {
+            m_StartTp = chrono::high_resolution_clock::now();    
+        }
+        
+        void stop() {
+            m_EndTp = chrono::high_resolution_clock::now();
+        }
+
+        ll time() const {
+            return getTime();
+        }
+
+    private:
+        chrono::time_point<chrono::high_resolution_clock> m_StartTp, m_EndTp;
+        function<ll()> getTime;
+    
+        template<typename DurationType>
+        Timer& set_resolution() {
+            getTime = [this]() -> ll {
+                auto start = chrono::time_point_cast<DurationType>(m_StartTp).time_since_epoch().count();
+                auto end = chrono::time_point_cast<DurationType>(m_EndTp).time_since_epoch().count();
+                return end - start;
+            };
+            return *this;
+        }
+};
 
 // hacks
 struct custom_hash {
@@ -191,18 +244,38 @@ vll sort_indices(const vector<T> &v) {
     return idx;
 }
 
-void solve() {
-    
+pair<bool, array<int, 3>> sum2(vll& a, int x, int c) {
+    int p = a.size() - 1;
+    for (int i = 0; i < (ll)a.size(); ++i) {
+        if(i == c) continue;
+        while (p > i && a[i] + a[p] > x){
+            --p;
+            if(p == c) --p;
+        }
+        if(p <= i) break;
+        if (a[i] + a[p] == x) return {true, {c, i, p}};
+    }
+    return {false, {0, 0, 0}};
 }
 
 int32_t main() {
     fastio;
     setupio();
 
-    int tt;
-    cin >> tt;
-    while(tt--){
-        solve();
+    int n, x; cin >> n >> x;
+    vll a(n); cin >> a;
+    vll idx = sort_indices(a);
+    sort(all(a));
+
+    pair<bool, array<int, 3>> o;
+
+    for(int i = 0; i < n - 2; ++i){
+        o = sum2(a, x - a[i], i);
+        if(o.F){
+            for(int& j : o.S) cout << ++idx[j] << " ";
+            return 0;
+        }
     }
+    cout << "IMPOSSIBLE";
     return 0;
 } 

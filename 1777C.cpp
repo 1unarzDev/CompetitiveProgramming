@@ -30,7 +30,6 @@ constexpr ll MAXN = 1e5 + 5;
 #define rall(x) (x).rbegin(), (x).rend()
 #define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
-#define sz(x) ((ll)(x).size())
 
 // i/o
 void setupio() {
@@ -39,6 +38,60 @@ void setupio() {
         freopen("output.txt", "w", stdout);
     #endif
 }
+
+// benchmark
+class Timer {
+    public:
+        Timer() {
+            set_resolution<chrono::microseconds>();
+        }     
+
+        Timer& nanoseconds() { 
+            set_resolution<chrono::nanoseconds>();
+            return *this;
+        }
+
+        Timer& microseconds() {
+            set_resolution<chrono::microseconds>();
+            return *this;
+        }
+
+        Timer& milliseconds() {
+            set_resolution<chrono::milliseconds>();
+            return *this;
+        }
+
+        Timer& seconds() {
+            set_resolution<chrono::seconds>();
+            return *this;
+        }
+
+        void start() {
+            m_StartTp = chrono::high_resolution_clock::now();    
+        }
+        
+        void stop() {
+            m_EndTp = chrono::high_resolution_clock::now();
+        }
+
+        ll time() const {
+            return getTime();
+        }
+
+    private:
+        chrono::time_point<chrono::high_resolution_clock> m_StartTp, m_EndTp;
+        function<ll()> getTime;
+    
+        template<typename DurationType>
+        Timer& set_resolution() {
+            getTime = [this]() -> ll {
+                auto start = chrono::time_point_cast<DurationType>(m_StartTp).time_since_epoch().count();
+                auto end = chrono::time_point_cast<DurationType>(m_EndTp).time_since_epoch().count();
+                return end - start;
+            };
+            return *this;
+        }
+};
 
 // hacks
 struct custom_hash {
@@ -60,18 +113,27 @@ using safe_map = unordered_map<T1, T2, custom_hash>;
 
 // operator overloads
 template <typename T1, typename T2> // cin >> pair<T1, T2>
-istream& operator>>(istream &is, pair<T1, T2> &p) { return (is >> p.F >> p.S); }
+istream& operator>>(istream &istream, pair<T1, T2> &p) { return (istream >> p.first >> p.second); }
 template <typename T> // cin >> vector<T>
-istream& operator>>(istream &is, vector<T> &v) { for(auto &it : v) is >> it; return is; }
-template <typename T, size_t N> // cin >> array<T>
-istream& operator>>(istream &is, array<T, N> &a) { for(auto &it : a) is >> it; return is; }
+istream& operator>>(istream &istream, vector<T> &v) {
+    for(auto &it : v)
+        cin >> it;
+    return istream;
+}
 
 template<typename T1, typename T2> // cout << pair<T1, T2>
-ostream& operator<<(ostream &os, const pair<T1, T2> &p) { return (os << p.F << " " << p.S); }
+ostream& operator<<(ostream &ostream, const pair<T1, T2> &p) { return (ostream << p.F << " " << p.S); }
 template<typename T> // cout << vector<T>
-ostream& operator<<(ostream &os, const vector<T> &v) { for (auto &it : v) os << it << " "; return os; }
-template<typename T, size_t N> // cout << array<T>
-ostream& operator<<(ostream &os, const array<T, N> &a) { for (auto &it : a) os << it << " "; return os; }
+ostream& operator<<(ostream &ostream, const vector<T> &c) { for (auto &it : c) cout << it << " "; return ostream; }
+template<typename T> // cout << vector<vector<T>>
+ostream& operator<<(ostream &ostream, const vector<vector<T>> &c) {
+    for (auto &row : c) {
+        for (auto &elem : row)
+            ostream << elem << " ";
+        ostream << endl;
+    }
+    return ostream;
+}
 
 // utility functions
 ll binpower(ll base, ll e, ll mod) {
@@ -132,7 +194,6 @@ vector<char> sieve(ll n) {
     }
     return is_prime;
 }
-
 vll primes(ll n) {
     vll lp(n + 1);
     vll pr;
@@ -150,7 +211,6 @@ vll primes(ll n) {
     }
     return pr;
 }
-
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 ll lcm(ll a, ll b) { return a / gcd(a, b) * b; }
 ll gcd(const vll &v) {
@@ -180,19 +240,30 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-template <typename T>
-vll sort_indices(const vector<T> &v) {
-    vll idx(v.size());
-    iota(all(idx), 0);
-    
-    stable_sort(all(idx),
-                [&v](ll i1, ll i2) {return v[i1] < v[i2];});
-    
-    return idx;
-}
-
+const int m = 1e5;
 void solve() {
+    int n, m, p, ms; cin >> n >> m;
+    vll a(n); cin >> a;
+    vll f[M + 1];
+	for (int i = 2; i <= M; i++) {
+		for (int j = i; j <= M; j += i){
+            f[j].push_back(i);
+        }
+	}
     
+    map<ll, mll> fq;
+    for(int i = 1; i <= m; ++i){
+        fq[0][i] = 
+    }
+
+    ms = INF;
+    sort(all(a));
+    for(int i = 0; i < n; ++i){
+        while(fq[0].size() )
+        for(auto& j : f[a[i]]){
+            ++fq[j];
+        }
+    }
 }
 
 int32_t main() {
@@ -204,5 +275,6 @@ int32_t main() {
     while(tt--){
         solve();
     }
+    
     return 0;
 } 

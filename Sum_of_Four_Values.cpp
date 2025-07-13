@@ -40,6 +40,60 @@ void setupio() {
     #endif
 }
 
+// benchmark
+class Timer {
+    public:
+        Timer() {
+            set_resolution<chrono::microseconds>();
+        }     
+
+        Timer& nanoseconds() { 
+            set_resolution<chrono::nanoseconds>();
+            return *this;
+        }
+
+        Timer& microseconds() {
+            set_resolution<chrono::microseconds>();
+            return *this;
+        }
+
+        Timer& milliseconds() {
+            set_resolution<chrono::milliseconds>();
+            return *this;
+        }
+
+        Timer& seconds() {
+            set_resolution<chrono::seconds>();
+            return *this;
+        }
+
+        void start() {
+            m_StartTp = chrono::high_resolution_clock::now();    
+        }
+        
+        void stop() {
+            m_EndTp = chrono::high_resolution_clock::now();
+        }
+
+        ll time() const {
+            return getTime();
+        }
+
+    private:
+        chrono::time_point<chrono::high_resolution_clock> m_StartTp, m_EndTp;
+        function<ll()> getTime;
+    
+        template<typename DurationType>
+        Timer& set_resolution() {
+            getTime = [this]() -> ll {
+                auto start = chrono::time_point_cast<DurationType>(m_StartTp).time_since_epoch().count();
+                auto end = chrono::time_point_cast<DurationType>(m_EndTp).time_since_epoch().count();
+                return end - start;
+            };
+            return *this;
+        }
+};
+
 // hacks
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
@@ -60,18 +114,18 @@ using safe_map = unordered_map<T1, T2, custom_hash>;
 
 // operator overloads
 template <typename T1, typename T2> // cin >> pair<T1, T2>
-istream& operator>>(istream &is, pair<T1, T2> &p) { return (is >> p.F >> p.S); }
+istream& operator>>(istream &istream, pair<T1, T2> &p) { return (istream >> p.F >> p.S); }
 template <typename T> // cin >> vector<T>
-istream& operator>>(istream &is, vector<T> &v) { for(auto &it : v) is >> it; return is; }
+istream& operator>>(istream &istream, vector<T> &v) { for(auto &it : v) istream >> it; return istream; }
 template <typename T, size_t N> // cin >> array<T>
-istream& operator>>(istream &is, array<T, N> &a) { for(auto &it : a) is >> it; return is; }
+istream& operator>>(istream &istream, array<T, N> &v) { for(auto &it : v) istream >> it; return istream; }
 
 template<typename T1, typename T2> // cout << pair<T1, T2>
-ostream& operator<<(ostream &os, const pair<T1, T2> &p) { return (os << p.F << " " << p.S); }
+ostream& operator<<(ostream &ostream, const pair<T1, T2> &p) { return (ostream << p.F << " " << p.S); }
 template<typename T> // cout << vector<T>
-ostream& operator<<(ostream &os, const vector<T> &v) { for (auto &it : v) os << it << " "; return os; }
+ostream& operator<<(ostream &ostream, const vector<T> &c) { for (auto &it : c) ostream << it << " "; return ostream; }
 template<typename T, size_t N> // cout << array<T>
-ostream& operator<<(ostream &os, const array<T, N> &a) { for (auto &it : a) os << it << " "; return os; }
+ostream& operator<<(ostream &ostream, const array<T, N> &c) { for (auto &it : c) ostream << it << " "; return ostream; }
 
 // utility functions
 ll binpower(ll base, ll e, ll mod) {
@@ -164,6 +218,17 @@ ll lcm(const vll &v) {
     });
 }
 
+template <typename T>
+vll sort_indices(const vector<T> &v) {
+    vll idx(v.size());
+    iota(all(idx), 0);
+    
+    stable_sort(all(idx),
+                [&v](ll i1, ll i2) {return v[i1] < v[i2];});
+    
+    return idx;
+}
+
 template <typename Map>
 auto min_key(const Map& mp) -> decltype(mp.begin()->F) {
     return std::min_element(mp.begin(), mp.end(),
@@ -180,29 +245,67 @@ auto max_key(const Map& mp) -> decltype(mp.begin()->first) {
         })->F;
 }
 
-template <typename T>
-vll sort_indices(const vector<T> &v) {
-    vll idx(v.size());
-    iota(all(idx), 0);
-    
-    stable_sort(all(idx),
-                [&v](ll i1, ll i2) {return v[i1] < v[i2];});
-    
-    return idx;
-}
+struct sp {
+    int s, a, b;
 
-void solve() {
+    // use 1 indexing
+    sp(vll &v, int _a, int _b){
+        s = v[_a] + v[_b];        
+        a = ++_a;
+        b = ++_b;
+    }
     
-}
+    bool operator==(const sp& o){
+        return a == o.a || b == o.b || a == o.b || b == o.a;
+    }
+    
+    bool operator!=(const sp& o){
+        return !(*this == o);
+    }
+};
+ostream& operator<<(ostream &os, const sp &v) { return (os << v.a << " " << v.b); }
 
+// o(n^2) generate all sum pairs
+// o(n^2logn^2) sort all sum pairs
+// o(n^2) find two pairs that sum to the goal
 int32_t main() {
     fastio;
     setupio();
+    
+    bool f;
+    int n, x, p, b; cin >> n >> x;
+    vll a(n); cin >> a;
+    vector<sp> s;
 
-    int tt;
-    cin >> tt;
-    while(tt--){
-        solve();
+    for(int i = 0; i < n; ++i){
+        for(int j = i + 1; j < n; ++j){
+            s.eb(a, i, j);
+        }
     }
+    
+    sort(all(s), [](sp &a, sp &b){
+        return a.s < b.s;
+    });
+
+    f = false;
+    p = sz(s) - 1;
+    for(int i = 0; i < sz(s); ++i){
+        b = p;
+        while(p > i && s[i].s + s[p].s >= x){
+            if(s[i].s + s[p].s == x){
+                if(s[i] != s[p]){
+                    cout << s[i] << " " << s[p];
+                    return 0;
+                }
+                else f = true;
+            }
+            --p;
+        }
+        if(i != sz(s) - 1 && s[i].s == s[i + 1].s && f){
+            p = b;
+            f = false;
+        }
+    }
+    cout << "IMPOSSIBLE";
     return 0;
 } 
