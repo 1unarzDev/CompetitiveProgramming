@@ -16,7 +16,7 @@ constexpr ll MOD = 1e9 + 7;
 constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
-constexpr ll MAXN = 1e7;
+constexpr ll MAXN = 1e5 + 5;
 
 // macros
 #define F first
@@ -112,26 +112,25 @@ bool miller_rabin(ll n) {
     return true;
 }
 
-vll sieve(ll n) {
+// o(nloglogn) <1e9
+vector<char> sieve(ll n) {
     vector<char> is_prime(n + 1, true);
-    vll primes;
     is_prime[0] = is_prime[1] = false;
     ll t = sqrt(n);
-    for (ll i = 2; i <= n; ++i) {
+    for (ll i = 2; i <= t; i++) {
         if (is_prime[i]) {
-            primes.pb(i);
             for (ll j = i * i; j <= n; j += i) {
                 is_prime[j] = false;
             }
         }
     }
-    return primes;
+    return is_prime;
 }
 
+// o(n) asymptomatically better
 vll primes(ll n) {
     vll lp(n + 1);
     vll pr;
-    pr.reserve(n / log(n));
     for (ll i = 2; i <= n; ++i){
         if(lp[i] == 0){
             lp[i] = i;
@@ -187,24 +186,30 @@ vll sort_indices(const vector<T> &v) {
     return idx;
 }
 
+// pre-processing, find the number of cells that can be visited from every position
+// subtract one from those possibilities every time you move sideways but don't subtract if you go up a level
+// 
+void solve() {
+    int n, m, d;
+    cin >> n >> m >> d;
+    vector<vector<char>> h(n, vll(d, 0));
+    string s;
+
+    for(int i = 0; i < n; ++i){
+        cin >> s;
+        for(int j = 0; j < m; ++j) if(s[j] == 'X') h[i][j] = 1;
+    }
+    
+    
+}
+
 int32_t main() {
     fastio;
- 
-    ll tt, c, m;
+
+    int tt;
     cin >> tt;
-    vll n(tt);
-    cin >> n;
-    m = 0;
-    for(int i = 0; i < tt; ++i) m = max(m, n[i]);
-    vll pr = sieve(m);
- 
-    for(int i = 0; i < tt; ++i){
-        c = 0;
-        for(int j = 0; j < pr.size() && pr[j] <= n[i]; ++j){
-            c += n[i] / pr[j];
-        }
-        cout << c << endl;
+    while(tt--){
+        solve();
     }
- 
     return 0;
 } 

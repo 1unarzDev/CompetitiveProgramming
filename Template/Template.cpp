@@ -28,17 +28,10 @@ constexpr ll MAXN = 1e5 + 5;
 #define mp make_pair
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
-#define fastio ios_base::sync_with_stdio(false); cin.tie(0)
 #define endl "\n"
 #define sz(x) ((ll)(x).size())
-
-// i/o
-void setupio() {
-    #ifdef LOCAL
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-    #endif
-}
+#define fastio ios_base::sync_with_stdio(false); cin.tie(0)
+#define setupio(r, w) freopen(r, "r", stdin); freopen(w, "w", stdout);
 
 // hacks
 struct custom_hash {
@@ -119,6 +112,7 @@ bool miller_rabin(ll n) {
     return true;
 }
 
+// o(nloglogn) <1e9
 vector<char> sieve(ll n) {
     vector<char> is_prime(n + 1, true);
     is_prime[0] = is_prime[1] = false;
@@ -133,6 +127,7 @@ vector<char> sieve(ll n) {
     return is_prime;
 }
 
+// o(n) asymptomatically better
 vll primes(ll n) {
     vll lp(n + 1);
     vll pr;
@@ -197,7 +192,6 @@ void solve() {
 
 int32_t main() {
     fastio;
-    setupio();
 
     int tt;
     cin >> tt;

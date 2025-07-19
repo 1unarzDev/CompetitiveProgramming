@@ -16,7 +16,7 @@ constexpr ll MOD = 1e9 + 7;
 constexpr ll MOD2 = 998244353;
 constexpr ld EPS = 1e-9;
 constexpr ll INF = 2e18;
-constexpr ll MAXN = 1e7;
+constexpr ll MAXN = 1e5 + 5;
 
 // macros
 #define F first
@@ -112,26 +112,25 @@ bool miller_rabin(ll n) {
     return true;
 }
 
-vll sieve(ll n) {
+// o(nloglogn) <1e9
+vector<char> sieve(ll n) {
     vector<char> is_prime(n + 1, true);
-    vll primes;
     is_prime[0] = is_prime[1] = false;
     ll t = sqrt(n);
-    for (ll i = 2; i <= n; ++i) {
+    for (ll i = 2; i <= t; i++) {
         if (is_prime[i]) {
-            primes.pb(i);
             for (ll j = i * i; j <= n; j += i) {
                 is_prime[j] = false;
             }
         }
     }
-    return primes;
+    return is_prime;
 }
 
+// o(n) asymptomatically better
 vll primes(ll n) {
     vll lp(n + 1);
     vll pr;
-    pr.reserve(n / log(n));
     for (ll i = 2; i <= n; ++i){
         if(lp[i] == 0){
             lp[i] = i;
@@ -187,24 +186,35 @@ vll sort_indices(const vector<T> &v) {
     return idx;
 }
 
+/* you can preprocess the array at each index
+ * to raise every previous value up to the current
+ * value (calculate the next value by taking the 
+ * previous calculated value, c[i - 1], and adding the
+ * difference between the previous cell and new cell,
+ * w - 1 times, the size of the previous window),
+ * c[i] = c[i - 1] + (a[i] - a[i - 1]) * (i - m)
+ * and once you reach the value that exceeds k,
+ * the median will be a[i - 1] + (k - c[i - 1]) / (i - m)
+ */
 int32_t main() {
     fastio;
- 
-    ll tt, c, m;
-    cin >> tt;
-    vll n(tt);
-    cin >> n;
-    m = 0;
-    for(int i = 0; i < tt; ++i) m = max(m, n[i]);
-    vll pr = sieve(m);
- 
-    for(int i = 0; i < tt; ++i){
-        c = 0;
-        for(int j = 0; j < pr.size() && pr[j] <= n[i]; ++j){
-            c += n[i] / pr[j];
+
+    int n, k, m;
+    cin >> n >> k;
+    vll a(n), c(n);
+    cin >> a;
+    sort(all(a));
+
+    m = (n - 1) / 2;
+    c[m] = 0;
+    for(int i = m + 1; i < n; ++i){
+        c[i] = c[i - 1] + (a[i] - a[i - 1]) * (i - m);
+        if(c[i] > k){
+            cout << a[i - 1] + (k - c[i - 1]) / (i - m);
+            return 0;
         }
-        cout << c << endl;
     }
- 
+    cout << a[n - 1] + (k - c[n - 1]) / (n - m);
+
     return 0;
 } 
