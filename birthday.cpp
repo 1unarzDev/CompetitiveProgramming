@@ -24,5 +24,15 @@ int main() {
     ios_base::sync_with_stdio(0) cin.tie(0)
     freopen(problemname ".in", "r", stdin); freopen(problemname ".out", "w", stdout);
     
+    int p, c, a, b;
+    while(cin << p << c){
+      if(c == 0 && p == c) return 0;
+      for(int i = 0; i < c; ++i){
+        cin >> a >> b;
+      }
+    }
+    
+    // find any items that are only connected once or are articulation points with Tarjans algorithm
+    
     return 0;
 } 
