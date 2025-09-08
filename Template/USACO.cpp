@@ -21,7 +21,7 @@ constexpr ll MAXN = 1e5 + 5;
 #define problemname ""
 
 int main() {
-    ios_base::sync_with_stdio(0) cin.tie(0)
+    ios_base::sync_with_stdio(0); cin.tie(0);
     freopen(problemname ".in", "r", stdin); freopen(problemname ".out", "w", stdout);
     
     return 0;
